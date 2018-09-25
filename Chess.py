@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 Created on Fri Feb  2 20:04:38 2018
@@ -186,38 +185,38 @@ root.title("Gobang")
 root.geometry("760x560")
 
 """棋子提示"""
-side_canvas = tk.Canvas(root, width=220, height=50)
+side_canvas = tk.Canvas(root, width=220, height=50,bg = 'blue' )
 side_canvas.grid(row=0, column=1)
 side_canvas.create_oval(110 - PIECE_SIZE, 25 - PIECE_SIZE,
                         110 + PIECE_SIZE, 25 + PIECE_SIZE,
                         fill=piece_color, tags=("show_piece"))
-"""棋子提示标签"""
+# """棋子提示标签"""
 var = tk.StringVar()
 var.set("执黑棋")
 person_label = tk.Label(root, textvariable=var, width=12, anchor=tk.CENTER,
                         font=("Arial", 20))
 person_label.grid(row=1, column=1)
 
-"""输赢提示标签"""
+# """输赢提示标签"""
 var1 = tk.StringVar()
 var1.set("")
 result_label = tk.Label(root, textvariable=var1, width=12, height=4,
                         anchor=tk.CENTER, fg="red", font=("Arial", 25))
 result_label.grid(row=2, column=1, rowspan=2)
 
-"""游戏结束提示标签"""
+# """游戏结束提示标签"""
 var2 = tk.StringVar()
 var2.set("")
 game_label = tk.Label(root, textvariable=var2, width=12, height=4,
                       anchor=tk.CENTER, font=("Arial", 18))
 game_label.grid(row=4, column=1)
 
-"""重置按钮"""
+# """重置按钮"""
 reset_button = tk.Button(root, text="重新开始", font=20,
                          width=8, command=gameReset)
 reset_button.grid(row=5, column=1)
 
-"""棋盘绘制"""
+# """棋盘绘制"""
 # 背景
 canvas = tk.Canvas(root, bg="saddlebrown", width=540, height=540)
 canvas.bind("<Button-1>", coorBack)  # 鼠标单击事件绑定
