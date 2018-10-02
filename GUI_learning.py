@@ -51,11 +51,11 @@ def coorBack(event):  # return coordinates of cursor 返回光标坐标
     flag,is_win =coorJudge()
     #AI逻辑
     if flag and not is_win:
-        click_x,click_y=Local_AI.putChess()
+        click_x,click_y=Local_AI.putChess(coor_black,coor_white)
         flag2,is_win2 = coorJudge()
         #放成功为止
         while not flag2:
-            click_x, click_y = Local_AI.putChess()
+            click_x, click_y = Local_AI.putChess(coor_black,coor_white)
             flag2, is_win2 = coorJudge()
             if is_win2:
                 break
