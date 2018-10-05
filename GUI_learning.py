@@ -1,5 +1,7 @@
 import tkinter as tk
 from Local_AI import AI
+from Local_AI import Board
+import Const
 # 定义重置按钮的功能
 def gameReset():
     global person_flag, coor_black, coor_white, piece_color
@@ -18,8 +20,8 @@ def showChange(color):
     global piece_color
     piece_color = color
     side_canvas.delete("show_piece")
-    side_canvas.create_oval(150 - piece_size, 25 - piece_size,
-                            150 + piece_size, 25 + piece_size,
+    side_canvas.create_oval(150 - Const.piece_size, 25 - Const.piece_size,
+                            150 + Const.piece_size, 25 + Const.piece_size,
                             fill=piece_color, tags=("show_piece"))
 
 
@@ -35,7 +37,7 @@ def pushMessage():
 # 棋子的计数（工具）
 def piecesCount(coor, pieces_count, t1, t2):
     for i in range(1, 5):
-        (x, y) = (click_x + t1 * 35 * i, click_y + t2 * 35 * i)
+        (x, y) = (click_x + t1 * Const.stepLength * i, click_y + t2 * Const.stepLength * i)
         if (x, y) in coor:
             pieces_count += 1
         else:
@@ -44,14 +46,16 @@ def piecesCount(coor, pieces_count, t1, t2):
 
 
 # 事件监听处理
+signal = 0
 def coorBack(event):  # return coordinates of cursor 返回光标坐标
+
     global click_x, click_y
     click_x = event.x
     click_y = event.y
     flag,is_win =coorJudge()
     #AI逻辑
     if flag and not is_win:
-        click_x,click_y=ai.putChess([2,1],coor_black,coor_white)
+        click_x,click_y=ai.putChess([Const.player['white'],Const.player['black'] ],coor_black,coor_white)
         flag2,is_win2 = coorJudge()
         #放成功为止
         while not flag2:
@@ -59,6 +63,7 @@ def coorBack(event):  # return coordinates of cursor 返回光标坐标
             flag2, is_win2 = coorJudge()
             if is_win2:
                 break
+
 
 
 '''判断输赢的逻辑'''
@@ -89,13 +94,15 @@ def realJudge1(coor):
     pieces_count = 0
     pieces_count = piecesCount(coor, pieces_count, 1, 0)  # 右边
     pieces_count = piecesCount(coor, pieces_count, -1, 0)  # 左边
-    if pieces_count >= 4:
+    # if pieces_count >= 4:
+    if pieces_count >= Const.n_in_row-1:
         return 1
     else:
         pieces_count = 0
         pieces_count = piecesCount(coor, pieces_count, 0, -1)  # 上边
         pieces_count = piecesCount(coor, pieces_count, 0, 1)  # 下边
-        if pieces_count >= 4:
+        # if pieces_count >= 4:
+        if pieces_count >= Const.n_in_row - 1:
             return 1
         else:
             return 0
@@ -105,13 +112,15 @@ def realJudge2(coor):
     pieces_count = 0
     pieces_count = piecesCount(coor, pieces_count, 1, 1)  # 右下角
     pieces_count = piecesCount(coor, pieces_count, -1, -1)  # 左上角
-    if pieces_count >= 4:
+    # if pieces_count >= 4:
+    if pieces_count >= Const.n_in_row - 1:
         return 1
     else:
         pieces_count = 0
         pieces_count = piecesCount(coor, pieces_count, 1, -1)  # 右上角
         pieces_count = piecesCount(coor, pieces_count, -1, 1)  # 左下角
-        if pieces_count >= 4:
+        # if pieces_count >= 4:
+        if pieces_count >= Const.n_in_row - 1:
             return 1
         else:
             return 0
@@ -123,8 +132,8 @@ def realJudge2(coor):
 # 落子
 def putPiece(piece_color):
     global coor_black, coor_white
-    chessBorard.create_oval(click_x - piece_size, click_y - piece_size,
-                       click_x + piece_size, click_y + piece_size,
+    chessBorard.create_oval(click_x - Const.piece_size, click_y - Const.piece_size,
+                       click_x + Const.piece_size, click_y + Const.piece_size,
                        fill=piece_color, tags=("piece"))
     if piece_color == "white":
         coor_white.append((click_x, click_y))
@@ -150,10 +159,14 @@ def coorJudge():
         except ValueError:
             pass
         else:
+            # 离太远的话就算了
+            if abs(coor_list[0] - click_x) >= Const.stepLength or abs(coor_list[1] - click_y) >= Const.stepLength:
+                return False, False
+
             coor_tuple = tuple(coor_list)
             (click_x, click_y) = coor_tuple
             # print("tags = ", tags_tuple, "coors = ", coor_tuple)
-            if ((click_x, click_y) not in coor) and (click_x in pieces_x) and (click_y in pieces_y):
+            if ((click_x, click_y) not in coor) and (click_x in Const.pieces_x[:Const.total_step]) and (click_y in Const.pieces_y[:Const.total_step]):
                 # print("True")
                 if person_flag != 0:
                     if person_flag == 1:
@@ -164,41 +177,33 @@ def coorJudge():
                     elif person_flag == -1:
                         putPiece("white")
                         showChange("black")
-                        is_win = preJudge("black")
+                        is_win = preJudge("white")
                         # var.set("执黑棋")
                     person_flag *= -1
                     return True,is_win
     return False,False
-
-piece_size = 10
-chessBoardSize=(540,540)
-abs_zero = (32,32)
-stepLength = 35
-total_step = 15
-piece_color_black = "black"
-piece_color_white = "white"
+#黑棋位置
 coor_black = []
+#白棋位置
 coor_white = []
 person_flag = 1
-pieces_x = [i for i in range(abs_zero[0], abs_zero[0]+523, stepLength)]
-pieces_y = [i for i in range(abs_zero[1], 529, stepLength)]
 root = tk.Tk()
-
 #AI初始化
-ai  = AI(n_in_row=5, time=15)
+board = Board(width = Const.total_step,height = Const.total_step)
+ai = AI(board,n_in_row=Const.n_in_row, time=15)
 
 #先画棋盘
-chessBorard = tk.Canvas(root,bg = "saddlebrown",width=chessBoardSize[0], height=chessBoardSize[1])
+chessBorard = tk.Canvas(root,bg = "saddlebrown",width=Const.chessBoardSize[0], height=Const.chessBoardSize[1])
 chessBorard.grid(row=0, column=1, rowspan=6)
 # 线条
-for i in range(total_step):
-    chessBorard.create_line(abs_zero[0], (stepLength * i + abs_zero[1]), abs_zero[0]+(total_step-1)*stepLength, (stepLength * i + abs_zero[1]))
-    chessBorard.create_line((stepLength * i + abs_zero[0]), abs_zero[1], (stepLength * i + abs_zero[0]), abs_zero[1]+(total_step-1)*stepLength)
+for i in range(Const.total_step):
+    chessBorard.create_line(Const.abs_zero[0], (Const.stepLength * i + Const.abs_zero[1]), Const.abs_zero[0]+(Const.total_step-1)*Const.stepLength, (Const.stepLength * i + Const.abs_zero[1]))
+    chessBorard.create_line((Const.stepLength * i + Const.abs_zero[0]), Const.abs_zero[1], (Const.stepLength * i + Const.abs_zero[0]), Const.abs_zero[1]+(Const.total_step-1)*Const.stepLength)
 # 透明棋子（设置透明棋子，方便后面落子的坐标定位到正确的位置）
-for i in pieces_x:
-    for j in pieces_y:
-        chessBorard.create_oval(i - piece_size, j - piece_size,
-                           i + piece_size, j + piece_size,
+for i in Const.pieces_x[:Const.total_step]:
+    for j in Const.pieces_y[:Const.total_step]:
+        chessBorard.create_oval(i - Const.piece_size, j - Const.piece_size,
+                           i + Const.piece_size, j + Const.piece_size,
                            width=0, tags=(str(i), str(j)))
 chessBorard.bind("<Button-1>", coorBack)  # 鼠标单击事件绑定
 
@@ -206,24 +211,24 @@ chessBorard.bind("<Button-1>", coorBack)  # 鼠标单击事件绑定
 side_canvas = tk.Canvas(root, width=220, height=50,bg = 'gray' )
 side_canvas.grid(row=7, column=1)
 side_canvas.create_text(70,25,font=("Arial", 20),text="当前玩家:")
-side_canvas.create_oval(150 - piece_size, 25 - piece_size,
-                        150 + piece_size, 25 + piece_size,
-                        fill=piece_color_black, tags=("show_piece"))
+side_canvas.create_oval(150 - Const.piece_size, 25 - Const.piece_size,
+                        150 + Const.piece_size, 25 + Const.piece_size,
+                        fill=Const.piece_color_black, tags=("show_piece"))
 
 
 playerOne_canvas = tk.Canvas(root, width=220, height=50,bg = 'gray' )
 playerOne_canvas.grid(row=1, column=0)
 playerOne_canvas.create_text(50,25,font=("Arial", 20),text="玩家1:")
-playerOne_canvas.create_oval(150 - piece_size, 25 - piece_size,
-                        150 + piece_size, 25 + piece_size,
-                        fill=piece_color_black, tags=("show_piece"))
+playerOne_canvas.create_oval(150 - Const.piece_size, 25 - Const.piece_size,
+                        150 + Const.piece_size, 25 + Const.piece_size,
+                        fill=Const.piece_color_black, tags=("show_piece"))
 
 playerTwo_canvas = tk.Canvas(root, width=220, height=50,bg = 'gray' )
 playerTwo_canvas.grid(row=1, column=2)
 playerTwo_canvas.create_text(50,25,font=("Arial", 20),text="玩家2:")
-playerTwo_canvas.create_oval(150 - piece_size, 25 - piece_size,
-                        150 + piece_size, 25 + piece_size,
-                        fill=piece_color_white, tags=("show_piece"))
+playerTwo_canvas.create_oval(150 - Const.piece_size, 25 - Const.piece_size,
+                        150 + Const.piece_size, 25 + Const.piece_size,
+                        fill=Const.piece_color_white, tags=("show_piece"))
 
 
 
