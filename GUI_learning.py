@@ -1,5 +1,5 @@
 import tkinter as tk
-import Local_AI
+from Local_AI import AI
 # 定义重置按钮的功能
 def gameReset():
     global person_flag, coor_black, coor_white, piece_color
@@ -51,11 +51,11 @@ def coorBack(event):  # return coordinates of cursor 返回光标坐标
     flag,is_win =coorJudge()
     #AI逻辑
     if flag and not is_win:
-        click_x,click_y=Local_AI.putChess(coor_black,coor_white)
+        click_x,click_y=ai.putChess([2,1],coor_black,coor_white)
         flag2,is_win2 = coorJudge()
         #放成功为止
         while not flag2:
-            click_x, click_y = Local_AI.putChess(coor_black,coor_white)
+            click_x, click_y = ai.putChess([2,1],coor_black,coor_white)
             flag2, is_win2 = coorJudge()
             if is_win2:
                 break
@@ -184,6 +184,8 @@ pieces_x = [i for i in range(abs_zero[0], abs_zero[0]+523, stepLength)]
 pieces_y = [i for i in range(abs_zero[1], 529, stepLength)]
 root = tk.Tk()
 
+#AI初始化
+ai  = AI(n_in_row=5, time=15)
 
 #先画棋盘
 chessBorard = tk.Canvas(root,bg = "saddlebrown",width=chessBoardSize[0], height=chessBoardSize[1])
@@ -243,6 +245,7 @@ game_label.grid(row=4, column=2)
 reset_button = tk.Button(root, text="重新开始", font=20,
                          width=8, command=gameReset)
 reset_button.grid(row=5, column=2)
+
 
 #窗口循环
 root.mainloop()
