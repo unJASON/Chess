@@ -12,12 +12,13 @@ abs_zero = (32,32)
 stepLength = 35
 
 #共15条线
-total_step = 5
+total_step = 10
 
 piece_color_black = "black"
 piece_color_white = "white"
 
-n_in_row = 4
+#连成5子赢
+n_in_row = 5
 
 
 

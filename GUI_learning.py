@@ -13,18 +13,29 @@ def gameReset():
     chessBorard.delete("piece")  # 删除所有棋子
     coor_black = []  # 清空黑棋坐标存储器
     coor_white = []  # 清空白棋坐标存储器
-
+black_win = 0
+white_win = 0
 def trainAI():
-    global click_x,click_y
-    while(1):
-        click_x, click_y = ai.putChess([Const.player['black'], Const.player['white']], coor_black, coor_white)
-        flag2, is_win2 = coorJudge()
-        if is_win2:
-            break
-        click_x, click_y = ai.putChess([Const.player['white'], Const.player['black']], coor_black, coor_white)
-        flag2, is_win2 = coorJudge()
-        if is_win2:
-            break
+    global click_x,click_y,black_win,white_win
+    total = 5
+    i = 0
+    while i< total:
+        while(1):
+            click_x, click_y = ai.putChess([Const.player['black'], Const.player['white']], coor_black, coor_white)
+            flag, is_win1 = coorJudge()
+            if is_win1:
+                black_win = black_win + 1
+                break
+            click_x, click_y = ai.putChess([Const.player['white'], Const.player['black']], coor_black, coor_white)
+            flag, is_win2 = coorJudge()
+            if is_win2:
+                white_win = white_win + 1
+                break
+        gameReset()
+        i = i + 1
+        print("i:"+ str(i))
+    print("black_win:"+str(black_win))
+    print("white_win:"+str(white_win))
     pass
 # 右上方的棋子提示（工具）
 def showChange(color):
@@ -201,8 +212,8 @@ person_flag = 1
 root = tk.Tk()
 #AI初始化
 board = Board(width = Const.total_step,height = Const.total_step)
-ai = AI_mcst(board,n_in_row=Const.n_in_row, time=15)
-ai_2 = AI_mcst(board,n_in_row=Const.n_in_row,time=15)
+ai = AI_mcst(board,n_in_row=Const.n_in_row, time=1)
+ai_2 = AI_mcst(board,n_in_row=Const.n_in_row,time=1)
 
 #先画棋盘
 chessBorard = tk.Canvas(root,bg = "saddlebrown",width=Const.chessBoardSize[0], height=Const.chessBoardSize[1])
