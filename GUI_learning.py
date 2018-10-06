@@ -1,6 +1,6 @@
 import tkinter as tk
-from Local_AI import AI
-from Local_AI import Board
+from Local_AI import AI_mcst
+from Board import Board
 import Const
 # 定义重置按钮的功能
 def gameReset():
@@ -14,7 +14,18 @@ def gameReset():
     coor_black = []  # 清空黑棋坐标存储器
     coor_white = []  # 清空白棋坐标存储器
 
-
+def trainAI():
+    global click_x,click_y
+    while(1):
+        click_x, click_y = ai.putChess([Const.player['black'], Const.player['white']], coor_black, coor_white)
+        flag2, is_win2 = coorJudge()
+        if is_win2:
+            break
+        click_x, click_y = ai.putChess([Const.player['white'], Const.player['black']], coor_black, coor_white)
+        flag2, is_win2 = coorJudge()
+        if is_win2:
+            break
+    pass
 # 右上方的棋子提示（工具）
 def showChange(color):
     global piece_color
@@ -48,7 +59,6 @@ def piecesCount(coor, pieces_count, t1, t2):
 # 事件监听处理
 signal = 0
 def coorBack(event):  # return coordinates of cursor 返回光标坐标
-
     global click_x, click_y
     click_x = event.x
     click_y = event.y
@@ -57,12 +67,13 @@ def coorBack(event):  # return coordinates of cursor 返回光标坐标
     if flag and not is_win:
         click_x,click_y=ai.putChess([Const.player['white'],Const.player['black'] ],coor_black,coor_white)
         flag2,is_win2 = coorJudge()
-        #放成功为止
-        while not flag2:
-            click_x, click_y = ai.putChess([2,1],coor_black,coor_white)
-            flag2, is_win2 = coorJudge()
-            if is_win2:
-                break
+
+        # #放成功为止
+        # while not flag2:
+        #     click_x, click_y = ai.putChess([2,1],coor_black,coor_white)
+        #     flag2, is_win2 = coorJudge()
+        #     if is_win2:
+        #         break
 
 
 
@@ -190,7 +201,8 @@ person_flag = 1
 root = tk.Tk()
 #AI初始化
 board = Board(width = Const.total_step,height = Const.total_step)
-ai = AI(board,n_in_row=Const.n_in_row, time=15)
+ai = AI_mcst(board,n_in_row=Const.n_in_row, time=15)
+ai_2 = AI_mcst(board,n_in_row=Const.n_in_row,time=15)
 
 #先画棋盘
 chessBorard = tk.Canvas(root,bg = "saddlebrown",width=Const.chessBoardSize[0], height=Const.chessBoardSize[1])
@@ -250,6 +262,11 @@ game_label.grid(row=4, column=2)
 reset_button = tk.Button(root, text="重新开始", font=20,
                          width=8, command=gameReset)
 reset_button.grid(row=5, column=2)
+
+""""AI对战"""
+AI_button = tk.Button(root, text="AI对战", font=20,
+                         width=8, command=trainAI)
+AI_button.grid(row=6, column=2)
 
 
 #窗口循环

@@ -5,16 +5,10 @@ import Const
 import numpy as np
 from random import choice, shuffle
 from math import log, sqrt
+from abs_AI import abs_AI
 
-def trans_cor2abs(coords,width):
-    if coords.__len__() == 0:
-        return coords
-    code = []
-    for coord in coords:
-        code.append(int((coord[0] - Const.abs_zero[0]) /Const.stepLength * width
-                        + (coord[1] - Const.abs_zero[1]) / Const.stepLength))
-    return code
-class AI:
+
+class AI_mcst(abs_AI):
     def __init__(self,board,**kwargs):
 
         self.board = board
@@ -38,8 +32,8 @@ class AI:
 
     def putChess(self,play_turn,coor_black,coor_white):
         self.player = play_turn[0]
-        coor_white = trans_cor2abs(coor_white,self.board.width)
-        coor_black = trans_cor2abs(coor_black,self.board.width)
+        coor_white = self.trans_cor2abs(coor_white,self.board.width)
+        coor_black = self.trans_cor2abs(coor_black,self.board.width)
         #模拟棋盘现状
         self.board.putBoard(coor_black,coor_white)
         simulations = 0
@@ -65,6 +59,14 @@ class AI:
         coord_y = Const.abs_zero[1] + y * Const.stepLength
         return coord_x,coord_y
 
+    def trans_cor2abs(self,coords, width):
+        if coords.__len__() == 0:
+            return coords
+        code = []
+        for coord in coords:
+            code.append(int((coord[0] - Const.abs_zero[0]) / Const.stepLength * width
+                            + (coord[1] - Const.abs_zero[1]) / Const.stepLength))
+        return code
 
 
     def run_simulation(self,play_turn,board):
@@ -262,28 +264,3 @@ class AI:
 
         return False, -1
 
-class Board(object):
-    def __init__(self,**kwargs):
-        # 棋盘长宽
-        self.width = int(kwargs.get("width", 5))
-        self.height = int(kwargs.get("height", 5))
-
-        self.availables = list(range(self.width * self.height))  # available moves
-        self.states = {}
-        pass
-
-    # 模拟棋盘现状,需要重新初始化一下borad
-    def putBoard(self, coor_black, coor_white):
-        self.states = {}
-        self.availables = list(range(self.width * self.height))  # available moves
-        for i in coor_black:
-            self.update(Const.player['black'], i)
-        for i in coor_white:
-            self.update(Const.player['white'], i)
-
-    def update(self, player, move):
-        self.states[move] = player
-        self.availables.remove(move)
-
-    def current_state(self):
-        return tuple((m, self.states[m]) for m in sorted(self.states))  # for hash
