@@ -1,5 +1,6 @@
 import tkinter as tk
 from Local_AI import AI_mcst
+from Local_AI_v1 import AI_mcst_v1
 from Board import Board
 import Const
 # 定义重置按钮的功能
@@ -17,22 +18,33 @@ black_win = 0
 white_win = 0
 def trainAI():
     global click_x,click_y,black_win,white_win
-    total = 5
+    total = 1
     i = 0
+
     while i< total:
+        gameReset()
+        is_full = False
         while(1):
             click_x, click_y = ai.putChess([Const.player['black'], Const.player['white']], coor_black, coor_white)
             flag, is_win1 = coorJudge()
             if is_win1:
                 black_win = black_win + 1
                 break
-            click_x, click_y = ai.putChess([Const.player['white'], Const.player['black']], coor_black, coor_white)
+            #棋盘满了
+            if coor_black.__len__() + coor_white.__len__() >= Const.total_step * Const.total_step:
+                is_full = True
+                break
+            click_x, click_y = ai_2.putChess([Const.player['white'], Const.player['black']], coor_black, coor_white)
             flag, is_win2 = coorJudge()
             if is_win2:
                 white_win = white_win + 1
                 break
-        gameReset()
+            # 棋盘满了
+            if coor_black.__len__() + coor_white.__len__() >= Const.total_step * Const.total_step:
+                is_full = True
+                break
         i = i + 1
+
         print("i:"+ str(i))
     print("black_win:"+str(black_win))
     print("white_win:"+str(white_win))
@@ -76,7 +88,7 @@ def coorBack(event):  # return coordinates of cursor 返回光标坐标
     flag,is_win =coorJudge()
     #AI逻辑
     if flag and not is_win:
-        click_x,click_y=ai.putChess([Const.player['white'],Const.player['black'] ],coor_black,coor_white)
+        click_x,click_y=ai_2.putChess([Const.player['white'],Const.player['black'] ],coor_black,coor_white)
         flag2,is_win2 = coorJudge()
 
         # #放成功为止
@@ -212,8 +224,8 @@ person_flag = 1
 root = tk.Tk()
 #AI初始化
 board = Board(width = Const.total_step,height = Const.total_step)
-ai = AI_mcst(board,n_in_row=Const.n_in_row, time=1)
-ai_2 = AI_mcst(board,n_in_row=Const.n_in_row,time=1)
+ai = AI_mcst(board,n_in_row=Const.n_in_row, time=15)
+ai_2 = AI_mcst_v1(board,n_in_row=Const.n_in_row,time=15)
 
 #先画棋盘
 chessBorard = tk.Canvas(root,bg = "saddlebrown",width=Const.chessBoardSize[0], height=Const.chessBoardSize[1])
