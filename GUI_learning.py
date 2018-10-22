@@ -1,6 +1,7 @@
 import tkinter as tk
 from Local_AI import AI_mcst
 from Local_AI_v1 import AI_mcst_v1
+from Local_AI_v2 import AI_mcst_v2
 from Board import Board
 import Const
 # 定义重置按钮的功能
@@ -225,7 +226,7 @@ root = tk.Tk()
 #AI初始化
 board = Board(width = Const.total_step,height = Const.total_step)
 ai = AI_mcst(board,n_in_row=Const.n_in_row, time=15)
-ai_2 = AI_mcst_v1(board,n_in_row=Const.n_in_row,time=15)
+ai_2 = AI_mcst_v2(board,n_in_row=Const.n_in_row,time=15)
 
 #先画棋盘
 chessBorard = tk.Canvas(root,bg = "saddlebrown",width=Const.chessBoardSize[0], height=Const.chessBoardSize[1])
