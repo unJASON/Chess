@@ -75,7 +75,6 @@ class AI_mcst_v2(abs_AI):
         """
                 UCT RAVE main process
                 """
-
         plays = self.plays
         wins = self.wins
         plays_rave = self.plays_rave
@@ -157,15 +156,14 @@ class AI_mcst_v2(abs_AI):
                     wins_rave[(move, s)] = {}
                     for p in play_turn:
                         wins_rave[(move, s)][p] = 0
-
             visited_states.add((action, state))
 
             is_full = not len(availables)
             win, winner = self.has_a_winner(board,action)
             if is_full or win:
                 break
-
             player = self.get_player(play_turn)
+
 
         # Back-propagation
         for i, ((m_root, p), s_root) in enumerate(states_list):
@@ -181,7 +179,6 @@ class AI_mcst_v2(abs_AI):
                 plays_rave[(m_sub, s_root)] += 1  # all child nodes of s_root
                 if winner in wins_rave[(m_sub, s_root)]:
                     wins_rave[(m_sub, s_root)][winner] += 1  # each node is divided by the player
-
 
     def select_one_move(self):
         """
@@ -240,8 +237,7 @@ class AI_mcst_v2(abs_AI):
             new_x = x + x1*i
             new_y = y + y1*i
             #在边界内部
-            if new_x < border and new_y < border:
-
+            if new_x < border and new_y < border and new_x >=0 and new_y >=0:
                 if states.__contains__(new_x*border+new_y) and states[new_x*border+new_y] == player:
                     pieces_count +=1
                 else:
@@ -251,6 +247,7 @@ class AI_mcst_v2(abs_AI):
         return pieces_count
 
     def coorJudge(self,border,x,y,player, states):
+
         pieces_count = 0
         pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, 1, 0)  # 右边
         pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, -1, 0)  # 左边
