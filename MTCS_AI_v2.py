@@ -1,3 +1,4 @@
+"""修改胜利判断条件,base on v1"""
 import random
 import copy
 import time
@@ -7,7 +8,7 @@ from random import choice, shuffle
 from math import log, sqrt
 from abs_AI import abs_AI
 
-"""修改胜利判断条件,base on v1"""
+
 
 class AI_mcst_v2(abs_AI):
     def __init__(self,board,**kwargs):
@@ -31,7 +32,7 @@ class AI_mcst_v2(abs_AI):
         self.wins_rave = {}  # key:(move, state), value:{player: win times}
 
 
-    def putChess(self,play_turn,coor_black,coor_white):
+    def putChess(self,mode,play_turn,coor_black,coor_white):
         self.player = play_turn[0]
         coor_white = self.trans_cor2abs(coor_white,self.board.width)
         coor_black = self.trans_cor2abs(coor_black,self.board.width)
@@ -234,36 +235,59 @@ class AI_mcst_v2(abs_AI):
                 del self.plays_rave[(m, s)]
                 del self.wins_rave[(m, s)]
 
+    def piecesCount(self,border,states,x,y,player, pieces_count, x1, y1):
+        for i in range(1, Const.n_in_row):
+            new_x = x + x1*i
+            new_y = y + y1*i
+            #在边界内部
+            if new_x < border and new_y < border:
+
+                if states.__contains__(new_x*border+new_y) and states[new_x*border+new_y] == player:
+                    pieces_count +=1
+                else:
+                    break
+            else:
+                break
+        return pieces_count
+
+    def coorJudge(self,border,x,y,player, states):
+        pieces_count = 0
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, 1, 0)  # 右边
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, -1, 0)  # 左边
+        if pieces_count >= Const.n_in_row - 1:
+            return True
+
+        pieces_count = 0
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, 0, -1)  # 上边
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, 0, 1)  # 下边
+        if pieces_count >= Const.n_in_row - 1:
+            return True
+
+        pieces_count = 0
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, 1, 1)  # 右下角
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, -1, -1)  # 左上角
+        if pieces_count >= Const.n_in_row - 1:
+            return True
+
+        pieces_count = 0
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, 1, -1)  # 右上角
+        pieces_count = self.piecesCount(border,states,x,y,player, pieces_count, -1, 1)  # 左下角
+        if pieces_count >= Const.n_in_row - 1:
+            return True
+
+        return False
+
     def has_a_winner(self, board,action):
         moved = list(set(range(board.width * board.height)) - set(board.availables))
         if(len(moved) < self.n_in_row + 2):
             return False, -1
-
         width = board.width
-        height = board.height
         states = board.states
-        n = self.n_in_row
         m = action[0]
-
-        h = m // width
-        w = m % width
+        x = m // width
+        y = m % width
         player = action[1]
-
-        if (w in range(width - n + 1) and
-            len(set(states.get(i, -1) for i in range(m, m + n))) == 1):
-            return True, player
-
-        if (h in range(height - n + 1) and
-            len(set(states.get(i, -1) for i in range(m, m + n * width, width))) == 1):
-            return True, player
-
-        if (w in range(width - n + 1) and h in range(height - n + 1) and
-            len(set(states.get(i, -1) for i in range(m, m + n * (width + 1), width + 1))) == 1):
-            return True, player
-
-        if (w in range(n - 1, width) and h in range(height - n + 1) and
-            len(set(states.get(i, -1) for i in range(m, m + n * (width - 1), width - 1))) == 1):
-            return True, player
-
+        if self.coorJudge(width,x,y,player,states):
+            return True,player
         return False, -1
 

@@ -8,7 +8,7 @@ from math import log, sqrt
 from abs_AI import abs_AI
 
 
-class AI_mcst_v1(abs_AI):
+class AI_mcst(abs_AI):
     def __init__(self,board,**kwargs):
 
         self.board = board
@@ -30,7 +30,7 @@ class AI_mcst_v1(abs_AI):
         self.wins_rave = {}  # key:(move, state), value:{player: win times}
 
 
-    def putChess(self,play_turn,coor_black,coor_white):
+    def putChess(self,mode,play_turn,coor_black,coor_white):
         self.player = play_turn[0]
         coor_white = self.trans_cor2abs(coor_white,self.board.width)
         coor_black = self.trans_cor2abs(coor_black,self.board.width)
@@ -170,9 +170,7 @@ class AI_mcst_v1(abs_AI):
             action = (m_root, p)
             if (action, s_root) in plays:
                 plays[(action, s_root)] += 1  # all visited moves
-                """based on Local_AI modified here"""
-                # if player == winner and player in action:
-                if p == winner :
+                if player == winner and player in action:
                     wins[(action, s_root)] += 1  # only winner's moves
 
             for ((m_sub, p), s_sub) in states_list[i:]:
@@ -194,20 +192,20 @@ class AI_mcst_v1(abs_AI):
 
         # display the statistics for each possible play,
         # first is MC value, second is AMAF value
-        for x in sorted(
-                ((100 * self.wins.get(((move, self.player), self.board.current_state()), 0) /
-                  self.plays.get(((move, self.player), self.board.current_state()), 1),
-                  100 * self.wins_rave.get((move, self.board.current_state()), {}).get(self.player, 0) /
-                  self.plays_rave.get((move, self.board.current_state()), 1),
-                  self.wins.get(((move, self.player), self.board.current_state()), 0),
-                  self.plays.get(((move, self.player), self.board.current_state()), 1),
-                  self.wins_rave.get((move, self.board.current_state()), {}).get(self.player, 0),
-                  self.plays_rave.get((move, self.board.current_state()), 1),
-                  # self.locate_move(move))
-                  [move // self.board.width, move % self.board.width])
-                 for move in self.board.availables),
-                reverse=True):
-            print('{6}: {0:.2f}%--{1:.2f}% ({2} / {3})--({4} / {5})'.format(*x))
+        # for x in sorted(
+        #         ((100 * self.wins.get(((move, self.player), self.board.current_state()), 0) /
+        #           self.plays.get(((move, self.player), self.board.current_state()), 1),
+        #           100 * self.wins_rave.get((move, self.board.current_state()), {}).get(self.player, 0) /
+        #           self.plays_rave.get((move, self.board.current_state()), 1),
+        #           self.wins.get(((move, self.player), self.board.current_state()), 0),
+        #           self.plays.get(((move, self.player), self.board.current_state()), 1),
+        #           self.wins_rave.get((move, self.board.current_state()), {}).get(self.player, 0),
+        #           self.plays_rave.get((move, self.board.current_state()), 1),
+        #           # self.locate_move(move))
+        #           [move // self.board.width, move % self.board.width])
+        #          for move in self.board.availables),
+        #         reverse=True):
+        #     print('{6}: {0:.2f}%--{1:.2f}% ({2} / {3})--({4} / {5})'.format(*x))
         return move
 
     def get_player(self, players):

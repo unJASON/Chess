@@ -1,7 +1,7 @@
 import tkinter as tk
-from Local_AI import AI_mcst
-from Local_AI_v1 import AI_mcst_v1
-from Local_AI_v2 import AI_mcst_v2
+from MTCS_AI import AI_mcst
+from MTCS_AI_v1 import AI_mcst_v1
+from MTCS_AI_v2 import AI_mcst_v2
 from Board import Board
 import Const
 # 定义重置按钮的功能
@@ -35,7 +35,7 @@ def trainAI():
             if coor_black.__len__() + coor_white.__len__() >= Const.total_step * Const.total_step:
                 is_full = True
                 break
-            click_x, click_y = ai_2.putChess([Const.player['white'], Const.player['black']], coor_black, coor_white)
+            click_x, click_y = ai_2.putChess(Const.Mode_Local_GUI,[Const.player['white'], Const.player['black']], coor_black, coor_white)
             flag, is_win2 = coorJudge()
             if is_win2:
                 white_win = white_win + 1
@@ -71,7 +71,7 @@ def pushMessage():
 
 # 棋子的计数（工具）
 def piecesCount(coor, pieces_count, t1, t2):
-    for i in range(1, 5):
+    for i in range(1, Const.n_in_row):
         (x, y) = (click_x + t1 * Const.stepLength * i, click_y + t2 * Const.stepLength * i)
         if (x, y) in coor:
             pieces_count += 1
@@ -89,15 +89,8 @@ def coorBack(event):  # return coordinates of cursor 返回光标坐标
     flag,is_win =coorJudge()
     #AI逻辑
     if flag and not is_win:
-        click_x,click_y=ai_2.putChess([Const.player['white'],Const.player['black'] ],coor_black,coor_white)
+        click_x,click_y=ai_2.putChess(Const.Mode_Local_GUI,[Const.player['white'],Const.player['black'] ],coor_black,coor_white)
         flag2,is_win2 = coorJudge()
-
-        # #放成功为止
-        # while not flag2:
-        #     click_x, click_y = ai.putChess([2,1],coor_black,coor_white)
-        #     flag2, is_win2 = coorJudge()
-        #     if is_win2:
-        #         break
 
 
 
