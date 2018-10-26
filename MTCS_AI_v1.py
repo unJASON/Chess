@@ -92,6 +92,7 @@ class AI_mcst_v1(abs_AI):
             # Selection
             # if all moves have statistics info, choose one that have max UCB value
             state = board.current_state()
+
             actions = [(move, player) for move in availables]
 
             if all(plays.get((action, state)) for action in actions):

@@ -6,7 +6,7 @@ class Board(object):
         # 棋盘长宽
         self.width = int(kwargs.get("width", 5))
         self.height = int(kwargs.get("height", 5))
-
+        self.currentState = []
         self.availables = list(range(self.width * self.height))  # available moves
         self.states = {}
         pass
@@ -23,6 +23,8 @@ class Board(object):
     def update(self, player, move):
         self.states[move] = player
         self.availables.remove(move)
-
+        self.currentState.append((move,player))
+    #慢！
     def current_state(self):
-        return tuple((m, self.states[m]) for m in sorted(self.states))  # for hash
+        # return tuple((m, self.states[m]) for m in sorted(self.states))  # for hash
+        return tuple(self.currentState)

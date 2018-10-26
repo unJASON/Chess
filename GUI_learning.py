@@ -26,7 +26,7 @@ def trainAI():
         gameReset()
         is_full = False
         while(1):
-            click_x, click_y = ai.putChess([Const.player['black'], Const.player['white']], coor_black, coor_white)
+            click_x, click_y = ai.putChess(Const.Mode_Local_GUI,[Const.player['black'], Const.player['white']], coor_black, coor_white)
             flag, is_win1 = coorJudge()
             if is_win1:
                 black_win = black_win + 1

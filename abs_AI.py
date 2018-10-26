@@ -15,9 +15,16 @@ class abs_AI:
     def get_player(self):
         pass
 
+    def selection(self):
+        pass
+    def expansion(self):
+        pass
+    def simultaion(self):
+        pass
+    def backpropagation(self):
+        pass
 
     def prune(self):
         pass
-
     def has_a_winner(self):
         pass
