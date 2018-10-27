@@ -93,39 +93,12 @@ class AI_mcst_v2(abs_AI):
             # if all moves have statistics info, choose one that have max UCB value
             state = board.current_state()
             actions = [(move, player) for move in availables]
+            # actions = []
+            # for move in availables:
+            #     actions.append((move,player))
 
-            if all(plays.get((action, state)) for action in actions):
-                total = 0
-                for a, s in plays:
-                    if s == state:
-                        total += plays.get((a, s))  # N(s)
-                beta = self.equivalence / (3 * total + self.equivalence)
 
-                value, action = max(
-                    ((1 - beta) * (wins[(action, state)] / plays[(action, state)]) +
-                     beta * (wins_rave[(action[0], state)][player] / plays_rave[(action[0], state)]) +
-                     sqrt(self.confident * log(total) / plays[(action, state)]), action)
-                    for action in actions)  # UCT RAVE
-
-            else:
-                # a simple strategy
-                # prefer to choose the nearer moves without statistics,
-                # and then the farthers.
-                # try ro add statistics info to all moves quickly
-                # adjacents = []
-                # if len(availables) > self.n_in_row:
-                #     adjacents = self.adjacent_moves(board, state, player, plays)
-
-                # if len(adjacents):
-                #     action = (choice(adjacents), player)
-                # else:
-                #     peripherals = []
-                #     for action in actions:
-                #         if not plays.get((action, state)):
-                #             peripherals.append(action)
-                #     action = choice(peripherals)
-                action = choice(actions)
-
+            action = self.expands(plays,actions,wins,wins_rave,player,plays_rave,state)
             move, p = action
             board.update(player, move)
 
@@ -163,12 +136,49 @@ class AI_mcst_v2(abs_AI):
             if is_full or win:
                 break
             player = self.get_player(play_turn)
-
-
         # Back-propagation
+        self.backpropagation(states_list,plays,winner,wins,plays_rave,wins_rave)
+
+
+    def expands(self,plays,actions,wins,wins_rave,player,plays_rave,state):
+        if all(plays.get((action, state)) for action in actions):
+            total = 0
+            for a, s in plays:
+                if s == state:
+                    total += plays.get((a, s))  # N(s)
+            beta = self.equivalence / (3 * total + self.equivalence)
+
+            value, action = max(
+                ((1 - beta) * (wins[(action, state)] / plays[(action, state)]) +
+                 beta * (wins_rave[(action[0], state)][player] / plays_rave[(action[0], state)]) +
+                 sqrt(self.confident * log(total) / plays[(action, state)]), action)
+                for action in actions)  # UCT RAVE
+
+        else:
+            # a simple strategy
+            # prefer to choose the nearer moves without statistics,
+            # and then the farthers.
+            # try to add statistics info to all moves quickly
+            # adjacents = []
+            # if len(availables) > self.n_in_row:
+            #     adjacents = self.adjacent_moves(board, state, player, plays)
+
+            # if len(adjacents):
+            #     action = (choice(adjacents), player)
+            # else:
+            #     peripherals = []
+            #     for action in actions:
+            #         if not plays.get((action, state)):
+            #             peripherals.append(action)
+            #     action = choice(peripherals)
+            action = choice(actions)
+        return action
+
+    def backpropagation(self,states_list,plays,winner,wins,plays_rave,wins_rave):
         for i, ((m_root, p), s_root) in enumerate(states_list):
             action = (m_root, p)
-            if (action, s_root) in plays:
+            # if (action, s_root) in plays:
+            if plays.__contains__((action, s_root)):
                 plays[(action, s_root)] += 1  # all visited moves
                 """based on Local_AI modified here"""
                 # if player == winner and player in action:
