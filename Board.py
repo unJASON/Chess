@@ -9,6 +9,9 @@ class Board(object):
         self.currentState = []
         self.availables = list(range(self.width * self.height))  # available moves
         self.states = {}
+        self.player_action ={}
+        self.player_action[Const.player['black']] = [(l,Const.player['black'] ) for l in self.availables]
+        self.player_action[Const.player['white']] = [(l,Const.player['white'] ) for l in self.availables]
         pass
 
     # 模拟棋盘现状,需要重新初始化一下borad
@@ -23,8 +26,13 @@ class Board(object):
     def update(self, player, move):
         self.states[move] = player
         self.availables.remove(move)
+        self.player_action[Const.player['black']].remove( (move,Const.player['black']))
+        self.player_action[Const.player['white']].remove( (move,Const.player['white']) )
         self.currentState.append((move,player))
+
     #慢！
     def current_state(self):
         # return tuple((m, self.states[m]) for m in sorted(self.states))  # for hash
         return tuple(self.currentState)
+    def get_player_action(self,player):
+        return self.player_action[player]

@@ -12,7 +12,7 @@ from abs_AI import abs_AI
 
 class AI_mcst_v2(abs_AI):
     def __init__(self,board,**kwargs):
-
+        self.cnt = 0
         self.board = board
         # self.player = [1, 2]  # player1 and player2
         self.n_in_row = int(kwargs.get('n_in_row', 5))
@@ -89,14 +89,13 @@ class AI_mcst_v2(abs_AI):
         states_list = []
         # Simulation
         for t in range(1, self.max_actions + 1):
+            self.cnt = self.cnt + 1
             # Selection
             # if all moves have statistics info, choose one that have max UCB value
             state = board.current_state()
-            actions = [(move, player) for move in availables]
-            # actions = []
-            # for move in availables:
-            #     actions.append((move,player))
-
+            """modified"""
+            # actions = [(move, player) for move in availables]
+            actions = board.get_player_action(player)
 
             action = self.expands(plays,actions,wins,wins_rave,player,plays_rave,state)
             move, p = action

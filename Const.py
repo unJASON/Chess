@@ -12,7 +12,7 @@ abs_zero = (32,32)
 stepLength = 35
 
 #共15条线
-total_step = 7
+total_step = 15
 
 piece_color_black = "black"
 piece_color_white = "white"
