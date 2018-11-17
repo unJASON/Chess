@@ -1,5 +1,4 @@
-from MTCS_AI_v1 import AI_mcst_v1
-from MTCS_AI_v2 import AI_mcst_v2
+from pure.MTCS_AI_v2 import AI_mcst_v2
 from Board import Board
 import Const
 board = Board(width = Const.total_step,height = Const.total_step)

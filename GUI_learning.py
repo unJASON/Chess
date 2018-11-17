@@ -1,7 +1,6 @@
 import tkinter as tk
-from MTCS_AI import AI_mcst
-from MTCS_AI_v1 import AI_mcst_v1
-from MTCS_AI_v2 import AI_mcst_v2
+from pure.MTCS_AI import AI_mcst
+from pure.MTCS_AI_v2 import AI_mcst_v2
 from Board import Board
 import Const
 # 定义重置按钮的功能
