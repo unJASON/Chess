@@ -1,5 +1,4 @@
 import Const
-
 #将棋盘抽象出来
 class Board(object):
     def __init__(self,**kwargs):
